@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Child HTML</title>
+  <style>
+      *,
+      html {
+          margin: 0;
+          padding: 0;
+          border: 0;
+      }
+
+      html {
+          width: 100%;
+          height: 100%;
+      }
+
+      body {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          background-color: rgb(236, 152, 42);
+      }
+
+      .center {
+          width: 100%;
+          height: 50%;
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-family: "Trebuchet MS", Helvetica, sans-serif;
+          text-align: center;
+      }
+
+      h1 {
+          font-size: 2em;
+      }
+
+      p {
+          font-size: 1.2em;
+      }
+  </style>
+</head>
+
+<body>
+<div class="center">
+  <h1>Hello Again!</h1>
+  <p>This is served from a file</p>
+  <div id="greetings"><p>No user detected</p></div>
+</div>
+<script type="text/javascript">
+  const jsBridge = {
+    token: null,
+    username: null,
+    firstName: null,
+  }
+  function updateGreetings () {
+    const greetingsEl = document.getElementById('greetings')
+    const { firstName = '', username = '' } = jsBridge
+    if (greetingsEl && firstName && username) {
+      greetingsEl.innerHTML = `<p>Hi, ${firstName}!</p><p>Looged in as ${username}</p>`
+    }
+  }
+  window.addEventListener('load', function () {
+    window.addEventListener('message', function (event) {
+      if (event && event.data) {
+        console.log({ event })
+        const { data: message = {} } = event
+        const { type: messageEventType = '' } = message
+        if (messageEventType === 'jsBridgeData') {
+          const { data: { token, username, firstName } } = message
+          jsBridge.token = token || null
+          jsBridge.username = username || null
+          jsBridge.firstName = firstName || null
+          updateGreetings()
+        }
+      }
+    })
+    window.parent.postMessage({ type: 'jsBridgeRequest' }, '*')
+  })
+</script>
+</body>
+
+</html>
