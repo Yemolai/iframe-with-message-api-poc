@@ -52,14 +52,14 @@
   <div id="greetings"><p>No user detected</p></div>
 </div>
 <script type="text/javascript">
-  const jsBridge = {
+  const auth = {
     token: null,
     username: null,
     firstName: null,
   }
   function updateGreetings () {
     const greetingsEl = document.getElementById('greetings')
-    const { firstName = '', username = '' } = jsBridge
+    const { firstName = '', username = '' } = auth
     if (greetingsEl && firstName && username) {
       greetingsEl.innerHTML = `<p>Hi, ${firstName}!</p><p>Looged in as ${username}</p>`
     }
@@ -70,16 +70,16 @@
         console.log({ event })
         const { data: message = {} } = event
         const { type: messageEventType = '' } = message
-        if (messageEventType === 'jsBridgeData') {
+        if (messageEventType === 'authData') {
           const { data: { token, username, firstName } } = message
-          jsBridge.token = token || null
-          jsBridge.username = username || null
-          jsBridge.firstName = firstName || null
+          auth.token = token || null
+          auth.username = username || null
+          auth.firstName = firstName || null
           updateGreetings()
         }
       }
     })
-    window.parent.postMessage({ type: 'jsBridgeRequest' }, '*')
+    window.parent.postMessage({ type: 'authRequest' }, '*')
   })
 </script>
 </body>
